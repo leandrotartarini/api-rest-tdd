@@ -25,3 +25,39 @@ test('Deve inserir uma conta com sucesso', async () => {
       expect(result.status).toBe(201);
       expect(result.body.name).toBe('Acc #2');
 });
+
+// test('Deve listar todas as contas', () => {
+//   return app.db('accounts')
+//     .insert({ name: 'Acc list', user_id: user.id })
+//     .then(() => request(app).get(MAIN_ROUTE))
+//     .then((res) => {
+//       expect(res.status).toBe(200);
+//       expect(res.body.length).toBeGreaterThan(0);
+//     });
+// });
+
+test('Deve listar todas as contas', async () => {
+  await app.db('accounts').insert({ name: 'Acc list', user_id: user.id });
+  const result = await request(app).get(MAIN_ROUTE);
+  expect(result.status).toBe(200);
+  expect(result.body.length).toBeGreaterThan(0);
+});
+
+// test('Deve retornar uma conta por Id', () => {
+//   return app.db('accounts')
+//     .insert({ name: 'Acc By Id', user_id: user.id }, ['id'])
+//     .then(acc => request(app).get(`${MAIN_ROUTE}/${acc[0].id}`))
+//     .then((res) => {
+//       expect(res.status).toBe(200);
+//       expect(res.body.name).toBe('Acc By Id');
+//       expect(res.body.user_id).toBe(user.id);
+//     });
+// });
+
+test('Deve retornar uma conta por Id', async () => {
+  const acc = await app.db('accounts').insert({ name: 'Acc By Id', user_id: user.id }, ['id']);
+  const result = await request(app).get(`${MAIN_ROUTE}/${acc[0].id}`)
+    expect(result.status).toBe(200);
+    expect(result.body.name).toBe('Acc By Id');
+    expect(result.body.user_id).toBe(user.id);
+});

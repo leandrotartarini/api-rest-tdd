@@ -4,5 +4,15 @@ module.exports = (app) => {
     return res.status(201).json(result[0]);
   };
 
-  return { create };
+  const getAll = async (req, res) => {
+    const result = await app.services.account.findAll()
+    return res.status(200).json(result);
+  }
+
+  const get = async (req, res) => {
+    const result = await app.services.account.find({id: req.params.id})
+    return res.status(200).json(result);
+  }
+
+  return { create, getAll, get };
 };
