@@ -14,11 +14,23 @@ test('Deve listar todos os usuários', () => {
 
 test('Deve inserir usuário com sucesso', () => {
   return request(app).post('/users')
-    .send({ name: 'Leandro Tartarini', mail: mail, passwd: '280693' })
+    .send({ name: 'Leandro Tartarini', mail: `${Date.now()}@mail.com`, passwd: '280693' })
     .then((res) => {
       expect(res.status).toBe(201);
       expect(res.body.name).toBe('Leandro Tartarini');
+      expect(res.body).not.toHaveProperty('passwd');
     });
+});
+
+test('Deve armazenar senha criptografada', async () => {
+  const res = await request(app).post('/users')
+    .send({ name: 'Leandro Tartarini', mail: mail, passwd: '280693' });
+  expect(res.status).toBe(201);
+
+  const { id } = res.body;
+  const userDB = await app.services.user.findOne({id});
+  expect(userDB.passwd).not.toBeUndefined();
+  expect(userDB.passwd).not.toBe('280693');
 });
 
 test('Não deve inserir usuário sem nome', () => {
